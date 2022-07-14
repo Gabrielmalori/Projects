@@ -16,8 +16,16 @@ def imagem_nova(nlin, ncol, valor):
     while i < nlin:
         imagem += [[valor] * ncol]
         i += 1
-    
+        
     return imagem
+    
+    ''' resolucao alternativa e provavelmente mais eficaz:
+    lista = []
+    for i in range (nlin):
+        lista += [[valor] * ncol]
+        
+    return lista
+    '''
     
 #--------------------------------------------------------------------------        
 def imagem_carrega(dest, orig):
@@ -47,6 +55,13 @@ def imagem_carrega(dest, orig):
             dest[i][j] = orig[i][j]
     
     return None
+    
+    ''' resolucao alternativa e provavelmente mais eficaz:
+    for i in range(len(orig)): 
+        dest[i] = orig[i] #item da lista destino se iguala a lista orig
+        
+    return None
+    '''
 
 #--------------------------------------------------------------------------        
 def imagem_clone(imagem):
