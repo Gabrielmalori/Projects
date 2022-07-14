@@ -1,1 +1,118 @@
-teste
+def imagem_nova(nlin, ncol, valor):
+    ''' (int, int, int) ->  list
+    
+    Recebe numero de linhas, colunas e um valor e retorna uma imagem com tais dimensões de tal valor
+
+    Exemplo:
+    
+    >>> t = imagem_nova(3, 2, 7)
+    >>> t
+    [[7, 7], [7, 7], [7, 7]]
+    '''
+
+    imagem = []
+    i = 0
+    
+    while i < nlin:
+        imagem += [[valor] * ncol]
+        i += 1
+    
+    return imagem
+    
+#--------------------------------------------------------------------------        
+def imagem_carrega(dest, orig):
+    ''' (list, list) -> None
+
+    Recebe duas imagens de mesma dimensão e carrega o conteúdo de orig 
+    na imagem dest.
+
+    Exemplo:
+
+    >>> t = [[12, -122, 3],[1, 2, 3]]
+    >>> tt = [[11, 22, 33],[44, 55, 66]]
+    >>> imagem_carrega(tt, t)
+    >>> t
+    [[12, -122, 3], [1, 2, 3]]
+    >>> tt
+    [[12, -122, 3], [1, 2, 3]]
+    >>> tt[0][0] = 777
+    >>> t
+    [[12, -122, 3], [1, 2, 3]]
+    >>> tt
+    [[777, -122, 3], [1, 2, 3]]
+    '''
+    
+    for i in range(len(orig)):
+        for j in range(len(orig[i])):
+            dest[i][j] = orig[i][j]
+    
+    return None
+
+#--------------------------------------------------------------------------        
+def imagem_clone(imagem):
+    ''' (list) -> list
+
+    Recebe uma imagem e retorna um clone da imagem de maneira que sejam independentes.
+
+    Exemplo:
+    >>> t = [[12, -122, 3],[1, 2, 3]]
+    >>> tt = imagem_clone(t)
+    >>> t
+    [[12, -122, 3], [1, 2, 3]]
+    >>> tt
+    [[12, -122, 3], [1, 2, 3]]
+    >>> tt[0][0] = 111111
+    >>> t
+    [[12, -122, 3], [1, 2, 3]]
+    >>> tt
+    [[111111, -122, 3], [1, 2, 3]]
+    >>> 
+    '''
+    
+    clone = []
+    
+    for i in range(len(imagem)):
+        linha = []
+        for j in range(len(imagem[i])):
+            linha += [imagem[i][j]]
+        clone += [linha]
+    return clone
+
+#--------------------------------------------------------------------------        
+def imagem_regiao(imagem, left, top, right, bottom):
+    ''' (list, int, int, int, int) -> list
+
+    Recebe uma imagem e 4 valores que definem um região retangular onde:
+    top define a primeira linha, bottom define a última linha,  
+    left define a primeira coluna, e right define a última coluna da região.
+    A função cria e retorna uma imagem de dimensão
+    (bottom - top) linhas por (right-left) colunas, 
+    com conteúdo igual à região correspondente na imagem. 
+    Observe que os pontos na linha bottom e coluna right NÃO 
+    fazem parte da região retangular.
+    
+    Exemplo:
+    >>> imagem_regiao([[1, 2, 3, 4, 5], 
+                       [2, 3, 4, 5, 6], 
+                       [3, 4, 5, 6, 7], 
+                       [4, 5, 6, 7, 8] ], 1, 0, 4, 3)
+    [[2,3,4], [3,4,5], [4, 5, 6]]
+    >>> imagem_regiao([[1, 2, 3, 4, 5], 
+                       [6, 7, 8, 9, 0], 
+                       [0, 9, 8, 7, 6], 
+                       [1, 2, 3, 4, 5] ], 1, 2, 3, 4)
+    [[9,8], [2,3]]
+    '''
+    
+    regiao = []
+    
+    for i in range(len(imagem)):
+        if i >= top and i < bottom:
+            linha = []
+            for j in range(len(imagem[i])):
+                if j >= left and j < right:
+                   linha += [imagem[i][j]]
+            regiao += [linha]
+    return regiao
+
+#--------------------------------------------------------------------------            
