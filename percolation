@@ -1,0 +1,266 @@
+'''
+utilizacao do numpy e de codigo recursivo
+'''
+
+import numpy as np
+
+#-------------------------------------------------------------------------- 
+# constantes
+BLOCKED = 0  # sítio bloqueado
+OPEN    = 1  # sítio aberto
+FULL    = 2  # sítio cheio
+
+class Percolation:
+    def __init__(self, shape):    #shape deve ser int ou tupla
+        if type(shape) is int:  
+            if shape < 1:
+                print("a entrada tem que ser maior que zero")
+                return None
+            self.data = np.full((shape, shape), 0)
+            self.shape = (shape, shape)
+            
+        elif type(shape) is tuple:
+            if shape[0] < 1 or shape[1] < 1:
+                print("a entrada tem que ser maior que zero")
+                return None
+            self.data = np.full((shape[0],shape[1]), 0)
+            self.shape = shape
+        else:
+            print('ñ pod')
+            return None    
+        
+    def __str__(self):
+        o = ''
+        if self.shape[0] < 1 or self.shape[1] < 1: 
+            return 'eae loko manda um shape maneiro'
+            
+        o += '+---' * self.shape[1] + '+\n'
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                if self.data[i,j] == 0 : g = ' '
+                if self.data[i,j] == 1 : g = 'o'
+                if self.data[i,j] == 2 : g = 'x'
+                o += f'| {g} ' 
+            o +=  '|\n' + '+---' * self.shape[1] + '+\n'
+        
+        o += f'grade de dimensão: {self.shape[0]}x{self.shape[1]}\n'
+        o += f'no. sítios abertos: {self.no_open()}\n'
+        o += f'percolou: {self.percolates()}\n'
+                        
+        return o
+        
+    def is_open(self, lin, col):              #checa se determinado sitio está aberto ou nao
+        if lin >= self.shape[0] or col >= self.shape[1]: 
+            print(f'({lin},{col})\n ?? n cabe isso n fi')
+            return None
+        if lin < 0 or col < 0:
+            print(f'({lin},{col})\n ?? ta loko fi valor negativo?')
+            return None
+        if self.data[lin,col] == 1 or self.data[lin,col] == 2: return True
+        return False
+
+    def is_full(self, lin, col):               #checa se determinado sitio está CHEIO ou nao
+        if lin >= self.shape[0] or col >= self.shape[1]: 
+            print(f'({lin},{col})\n ?? n cabe isso n fi')
+            return None
+        if lin < 0 or col < 0:
+            print(f'({lin},{col})\n ?? ta loko fi valor negativo?')
+            return None
+        if self.data[lin,col] == 2: return True
+        return False
+    
+    def no_open(self):                        #retorna o numero de sitios abertos
+        o = 0
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                if self.is_open(i,j): o += 1
+        return o
+    
+    def chknh(self, lin, col):               
+    '''
+     coracao do programa, checa recursivamente se os sitios adjacentes estao abertos e, caso estejam, aberto o sitio atual
+    '''
+        
+        if lin == 0 and self.shape[0] - 1 != 0:
+            if self.data[lin+1,col] == 1: 
+                self.data[lin+1,col] = 2
+                self.chknh(lin+1,col)
+                
+        elif col == self.shape[1] - 1 and lin == self.shape[0] - 1:
+            if self.is_full(lin,col) and self.data[lin-1,col] == 1:
+                self.data[lin-1,col] = 2
+                self.chknh(lin-1, col)
+                
+            if self.data[lin,col] == 1 and self.is_full(lin-1,col):
+                self.data[lin,col] = 2
+                self.chknh(lin, col)
+                
+        elif col == 0 and lin == self.shape[0] - 1:
+            if self.is_full(lin,col) and self.data[lin-1,col] == 1:
+                self.data[lin-1,col] = 2
+                self.chknh(lin-1, col)
+                
+            if self.is_full(lin,col) and self.data[lin,col+1] == 1:
+                self.data[lin,col+1] = 2
+                self.chknh(lin, col+1)
+                
+            if self.data[lin,col] == 1 and self.is_full(lin-1,col):
+                self.data[lin,col] = 2
+                self.chknh(lin, col)
+                
+            if self.data[lin,col] == 1 and self.is_full(lin,col+1):
+                self.data[lin,col] = 2
+                self.chknh(lin, col)                
+                
+        elif col == 0 and self.is_full(lin,col):
+            if self.data[lin+1,col] == 1:
+                self.data[lin+1,col] = 2
+                self.chknh(lin+1,col)
+                
+            if self.data[lin-1,col] == 1:
+                self.data[lin-1,col] = 2
+                self.chknh(lin-1,col)
+                
+            if self.data[lin,col+1] == 1:
+                self.data[lin,col+1] = 2
+                self.chknh(lin,col+1)
+                
+        elif col == 0 and self.data[lin,col] == 1
+            if self.is_full(lin+1,col):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+            if self.is_full(lin-1,col):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+            if self.is_full(lin,col+1):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+        elif col == self.shape[1] - 1 and self.data[lin,col] == 1:
+            if self.is_full(lin+1,col):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+            if self.is_full(lin-1,col):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+            if self.is_full(lin,col-1):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+            
+        elif col == self.shape[1] - 1 and self.is_full(lin,col)
+            if self.data[lin+1,col] == 1:
+                self.data[lin+1,col] = 2
+                self.chknh(lin+1,col)
+                
+            if self.data[lin-1,col] == 1:
+                self.data[lin-1,col] = 2
+                self.chknh(lin-1,col)
+                
+            if self.data[lin,col-1] == 1:
+                self.data[lin,col-1] = 2
+                self.chknh(lin,col-1)
+                
+        elif lin == self.shape[0] - 1 and self.data[lin,col] == 1:
+            if self.is_full(lin-1,col):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+            if self.is_full(lin,col-1):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+            if self.is_full(lin,col+1):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+        
+        elif lin == self.shape[0] - 1 and self.is_full(lin,col):
+            if self.data[lin-1,col] == 1:
+                self.data[lin-1,col] = 2
+                self.chknh(lin-1,col)
+                
+            if self.data[lin,col-1] == 1:
+                self.data[lin,col-1] = 2
+                self.chknh(lin,col-1)
+                
+            if self.data[lin,col+1] == 1:
+                self.data[lin,col+1] = 2
+                self.chknh(lin,col+1)
+                 
+        elif self.data[lin,col] == 1:
+            if self.is_full(lin+1,col):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+            if self.is_full(lin-1,col):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+            if self.is_full(lin,col+1):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+            if self.is_full(lin,col-1):
+                self.data[lin,col] = 2
+                self.chknh(lin,col)
+                
+        elif self.is_full(lin,col):
+            if self.data[lin+1,col] == 1:
+                self.data[lin+1,col] = 2
+                self.chknh(lin+1,col)
+                
+            if self.data[lin-1,col] == 1:
+                self.data[lin-1,col] = 2
+                self.chknh(lin-1,col)
+                
+            if self.data[lin,col+1] == 1:
+                self.data[lin,col+1] = 2
+                self.chknh(lin,col+1)
+                
+            if self.data[lin,col-1] == 1:
+                self.data[lin,col-1] = 2
+                self.chknh(lin,col-1)
+            
+    def open(self, lin, col):                                #abre determinado sitio e checa os adjacentes
+        if lin >= self.shape[0] or col >= self.shape[1]: 
+            print(f'({lin},{col})\n ?? n cabe isso n fi')
+            return None
+        if lin < 0 or col < 0:
+            print(f'({lin},{col})\n ?? ta loko fi valor negativo?')
+            return None
+        
+        if lin == 0: 
+            self.data[lin,col] = 2
+            if not self.shape == (1,1): self.chknh(lin,col)
+        
+        elif self.data[lin,col] == 0: 
+            self.data[lin,col] = 1
+            self.chknh(lin,col)
+            
+    def percolates(self):                                     #checa se a ultima linha esta cheia
+        return 2 in self.data[self.shape[0]-1:]
+    
+    def get_grid(self):           #retorna copia da grade 
+        return self.data.copy()
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
